@@ -1,5 +1,5 @@
 const express = require('express')
-const bcrypt = require('bcrypt')
+const bcryptjs = require('bcryptjs')
 const User = require('../models/User')
 const router = express.Router()
 
@@ -27,7 +27,7 @@ router.post('/register', async (req, res) => {
     if (existing) {
       return res.status(400).send('Email already in use')
     }
-    const hashed = await bcrypt.hash(password, 10)
+    const hashed = await bcryptjs.hash(password, 10)
     const user = new User({ name, email, password: hashed })
     await user.save()
     req.session.user = { id: user._id, name: user.name, email: user.email }
@@ -54,7 +54,7 @@ router.post('/login', async (req, res) => {
     if (user.isLocked) {
       return res.status(403).send('Account is locked')
     }
-    const valid = await bcrypt.compare(password, user.password)
+    const valid = await bcryptjs.compare(password, user.password)
     if (!valid) {
       user.loginAttempts++
       if (user.loginAttempts >= 5) {

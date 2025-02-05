@@ -1,6 +1,6 @@
 const express = require('express')
 const crypto = require('crypto')
-const bcrypt = require('bcrypt')
+const bcryptjs = require('bcryptjs')
 const nodemailer = require('nodemailer')
 const User = require('../models/User')
 const router = express.Router()
@@ -69,7 +69,7 @@ router.post('/reset/:token', async (req, res) => {
     if (password.length < 6) {
       return res.status(400).send('Password must be at least 6 characters')
     }
-    user.password = await bcrypt.hash(password, 10)
+    user.password = await bcryptjs.hash(password, 10)
     user.resetPasswordToken = undefined
     user.resetPasswordExpires = undefined
     await user.save()
